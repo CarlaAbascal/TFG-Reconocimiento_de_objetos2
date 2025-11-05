@@ -147,6 +147,8 @@
             this.btnObjetos.TabIndex = 13;
             this.btnObjetos.Text = "Reconocimiento de objetos ";
             this.btnObjetos.UseVisualStyleBackColor = true;
+            this.btnObjetos.Click += new System.EventHandler(this.btnObjetos_Click);
+
             // 
             // Form1
             // 

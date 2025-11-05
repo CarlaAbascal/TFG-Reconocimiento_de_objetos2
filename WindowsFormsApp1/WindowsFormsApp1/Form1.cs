@@ -34,19 +34,18 @@ namespace WindowsFormsApp1
             CheckForIllegalCrossThreadCalls = false;
 
             // 🔹 Aquí llamamos manualmente al método de carga
-            Form1_Load(this, EventArgs.Empty);
+           // Form1_Load(this, EventArgs.Empty);
         }
 
         // ==========================
         //     INICIALIZACIÓN
         // ==========================
+      
         private void Form1_Load(object sender, EventArgs e)
         {
-            IniciarServidorTCP();   //Gestos
-            IniciarServidorVideo();   //Video
-            IniciarScriptPython();  // Ejecutar el script Python
-
+            // Se inicia vacío: los servidores se lanzan solo al pulsar los botones.
         }
+
 
         // ==========================
         //     TELEMETRÍA
@@ -92,22 +91,6 @@ namespace WindowsFormsApp1
 
         private bool sistemaActivo = false;
 
-
-        /* private void button5_Click(object sender, EventArgs e)
-         {
-             miDron.CambiarHeading(90, bloquear: false);
-         }
-
-         private void button6_Click(object sender, EventArgs e)
-         {
-             miDron.CambiarHeading(270, bloquear: false);
-         }
-
-         private void button7_Click(object sender, EventArgs e)
-         {
-             miDron.Mover("Forward", 10, bloquear: false);
-         }
-        */
 
         // ==========================
         //     TCP SERVER GESTOS
@@ -332,8 +315,6 @@ namespace WindowsFormsApp1
     });
 }
 
-
-
         // ==========================
         //     ACCIONES POR GESTO
         // ==========================
@@ -388,46 +369,244 @@ namespace WindowsFormsApp1
         {
 
         }
-
-        private void btnGestos_Click(object sender, EventArgs e)
+        //-----Boton Gestos-----
+        private async void btnGestos_Click(object sender, EventArgs e)
         {
-            listBox1.Items.Add("Activando reconocimiento de gestos...");
-
-            // Evita iniciar dos veces el script o los servidores
-            if (pythonProcess != null && !pythonProcess.HasExited)
+            // Si el modo gestos ya está activo → detenerlo
+            if (modoGestosActivo)
             {
-                listBox1.Items.Add("⚠️ El script Python ya está en ejecución.");
+                listBox1.Items.Add("🛑 Deteniendo reconocimiento de gestos...");
+                DetenerScriptPython(pythonProcess);
+                serverRunning = false;
+                listener?.Stop();
+
+                // liberar vídeo
+                videoServerRunning = false;
+                videoListener?.Stop();
+
+                modoGestosActivo = false;
+                btnGestos.Text = "Reconocer Gestos";
+                btnGestos.BackColor = SystemColors.Control;
                 return;
             }
 
-            if (serverRunning || videoServerRunning)
+
+            // Si había un script de objetos, lo detenemos primero
+            if (modoObjetosActivo)
             {
-                listBox1.Items.Add("⚠️ Los servidores ya están activos.");
-                return;
+                listBox1.Items.Add("⛔ Cerrando reconocimiento de objetos...");
+                DetenerScriptPython(pythonObjetosProcess);
+                modoObjetosActivo = false;
+                btnObjetos.Text = "Reconocer Objetos";
+                btnObjetos.BackColor = SystemColors.Control;
+                await Task.Delay(1000); // esperar a que se libere la cámara
             }
 
-            if (!sistemaActivo)
-            {
+            listBox1.Items.Add("🖐 Activando reconocimiento de gestos...");
+
+            // Iniciar servidores (solo si no están activos)
+            if (!serverRunning)
                 IniciarServidorTCP();
+            if (!videoServerRunning)
                 IniciarServidorVideo();
-                IniciarScriptPython();
-                sistemaActivo = true;
-                listBox1.Items.Add("Reconocimiento de gestos activado.");
-            }
-            else
+
+            IniciarScriptPython(); // tu método para detectar_mano.py
+            modoGestosActivo = true;
+            btnGestos.Text = "Detener Gestos";
+            btnGestos.BackColor = Color.LightGreen;
+        }
+
+
+        //-----------------OBJETOS---------------------
+
+        // ==========================
+        //     BOTÓN OBJETOS
+        // ==========================
+        private TcpListener listenerObjetos;
+        private bool serverObjetosRunning = false;
+        private System.Diagnostics.Process pythonObjetosProcess;
+
+        private bool modoGestosActivo = false;
+        private bool modoObjetosActivo = false;
+
+        private async void btnObjetos_Click(object sender, EventArgs e)
+        {
+            // Si el modo objetos ya está activo → detenerlo
+            if (modoObjetosActivo)
             {
-                listBox1.Items.Add("El sistema ya está activo.");
+                listBox1.Items.Add("🛑 Deteniendo reconocimiento de objetos...");
+                DetenerScriptPython(pythonObjetosProcess);
+                serverObjetosRunning = false;
+                listenerObjetos?.Stop();
+                modoObjetosActivo = false;
+                btnObjetos.Text = "Reconocer Objetos";
+                btnObjetos.BackColor = SystemColors.Control;
+                return;
+            }
+
+            // Si había un script de gestos, lo detenemos primero
+            if (modoGestosActivo)
+            {
+                listBox1.Items.Add("⛔ Cerrando reconocimiento de gestos...");
+                DetenerScriptPython(pythonProcess);
+                modoGestosActivo = false;
+                btnGestos.Text = "Reconocer Gestos";
+                btnGestos.BackColor = SystemColors.Control;
+                await Task.Delay(1000); // esperar a que se libere la cámara
+            }
+
+            listBox1.Items.Add("🔍 Activando reconocimiento de objetos...");
+
+            // Iniciar servidor de objetos si no está activo
+            if (!serverObjetosRunning)
+                IniciarServidorObjetos();
+
+            // Esperar a que el servidor levante el puerto
+            await Task.Delay(2000); // ⚠️ este delay es CLAVE
+
+            IniciarScriptPythonObjetos(); // método que lanza detectarObjetos.py
+            modoObjetosActivo = true;
+            btnObjetos.Text = "Detener Objetos";
+            btnObjetos.BackColor = Color.LightGreen;
+        }
+
+
+
+        // ==========================
+        //     SERVIDOR TCP OBJETOS
+        // ==========================
+        private void IniciarServidorObjetos()
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    int puerto = 5007; // distinto al de gestos (5005)
+                    listenerObjetos = new TcpListener(IPAddress.Parse("127.0.0.1"), puerto);
+                    listenerObjetos.Start();
+                    serverObjetosRunning = true;
+                    listBox1.Items.Add($"Servidor TCP (objetos) iniciado en puerto {puerto}");
+
+                    while (serverObjetosRunning)
+                    {
+                        TcpClient client = listenerObjetos.AcceptTcpClient();
+                        listBox1.Items.Add("Cliente de objetos conectado desde Python.");
+
+                        NetworkStream stream = client.GetStream();
+                        byte[] buffer = new byte[1024];
+                        StringBuilder sb = new StringBuilder();
+
+                        while (client.Connected)
+                        {
+                            int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                            if (bytesRead == 0) break;
+
+                            string data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                            sb.Append(data);
+
+                            // Procesar mensajes separados por salto de línea
+                            while (sb.ToString().Contains("\n"))
+                            {
+                                string line = sb.ToString();
+                                int index = line.IndexOf('\n');
+                                string mensaje = line.Substring(0, index).Trim();
+                                sb.Remove(0, index + 1);
+
+                                if (!string.IsNullOrWhiteSpace(mensaje))
+                                {
+                                    listBox1.Items.Add($"🔍 Objeto detectado: {mensaje}");
+                                }
+                            }
+                        }
+
+                        client.Close();
+                        listBox1.Items.Add("Cliente de objetos desconectado.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    listBox1.Items.Add($"❌ Error en servidor de objetos: {ex.Message}");
+                }
+            });
+        }
+
+        // ==========================
+        //     SCRIPT PYTHON OBJETOS
+        // ==========================
+        private void IniciarScriptPythonObjetos()
+        {
+            try
+            {
+                string pythonExe = @"C:\Users\CARLA\AppData\Local\Programs\Python\Python310\python.exe";
+                string scriptPath = Path.Combine(Application.StartupPath, "detectarObjetos.py"); // ✅ Ruta relativa al .exe
+
+                if (!File.Exists(scriptPath))
+                {
+                    listBox1.Items.Add($"❌ No se encontró el script en: {scriptPath}");
+                    return;
+                }
+
+                var psi = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = pythonExe,
+                    Arguments = $"\"{scriptPath}\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                pythonObjetosProcess = new System.Diagnostics.Process { StartInfo = psi };
+                pythonObjetosProcess.OutputDataReceived += (s, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                        listBox1.Items.Add($"[Python Objetos]: {e.Data}");
+                };
+                pythonObjetosProcess.ErrorDataReceived += (s, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                        listBox1.Items.Add($"⚠️ [Error Python Objetos]: {e.Data}");
+                };
+
+                pythonObjetosProcess.Start();
+                pythonObjetosProcess.BeginOutputReadLine();
+                pythonObjetosProcess.BeginErrorReadLine();
+
+                listBox1.Items.Add("✅ Script de reconocimiento de objetos iniciado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                listBox1.Items.Add($"❌ Error al iniciar script de objetos: {ex.Message}");
             }
         }
 
-        //-----Boton preparado, pero no funcionando----
-        private void btnObjetos_Click(object sender, EventArgs e)
+
+        //-------------------DETENER SCRIPT----------------------
+        private void DetenerScriptPython(System.Diagnostics.Process proceso)
         {
-            MessageBox.Show("Módulo de reconocimiento de objetos próximamente.",
-                            "En desarrollo",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+            try
+            {
+                if (proceso != null && !proceso.HasExited)
+                {
+                    proceso.Kill();
+                    proceso.WaitForExit(); // 🔹 Esperar a que se cierre completamente
+                   // proceso.Dispose();
+                    listBox1.Items.Add("✅ Script Python detenido correctamente.");
+                }
+            }
+            catch (Exception ex)
+            {
+                listBox1.Items.Add($"⚠️ Error al detener script: {ex.Message}");
+            }
+            finally
+            {
+                proceso?.Dispose();
+                if (proceso == pythonProcess) { pythonProcess = null; modoGestosActivo = false; }
+                if (proceso == pythonObjetosProcess) { pythonObjetosProcess = null; modoObjetosActivo = false; }
+            }
+        
         }
+
 
     }
 }

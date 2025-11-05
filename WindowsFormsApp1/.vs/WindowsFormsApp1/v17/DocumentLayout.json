@@ -1,25 +1,29 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\",
+  "WorkspaceRootPath": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\windowsformsapp1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|c:\\users\\carla\\desktop\\universitat\\tfg\\tfg-reconocimiento_de_objetos2\\windowsformsapp1\\windowsformsapp1\\detectarobjetos.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|solutionrelative:windowsformsapp1\\detectarobjetos.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|c:\\users\\carla\\desktop\\universitat\\tfg\\tfg-reconocimiento_de_objetos2\\windowsformsapp1\\windowsformsapp1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|solutionrelative:windowsformsapp1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\windowsformsapp1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\windowsformsapp1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|solutionrelative:windowsformsapp1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\windowsformsapp1\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\windowsformsapp1\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|solutionrelative:windowsformsapp1\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|c:\\users\\carla\\desktop\\universitat\\tfg\\tfg-reconocimiento_de_gestos\\windowsformsapp1\\windowsformsapp1\\detectar_mano.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\windowsformsapp1\\detectar_mano.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|solutionrelative:windowsformsapp1\\detectar_mano.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\windowsformsapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\windowsformsapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BA198421-85D3-4AD4-9EA5-65E8B30A89CD}|WindowsFormsApp1\\WindowsFormsApp1.csproj|solutionrelative:windowsformsapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -33,17 +37,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Form1.cs",
-              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.cs",
+              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.cs",
               "RelativeDocumentMoniker": "WindowsFormsApp1\\Form1.cs",
-              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.cs",
+              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.cs",
               "RelativeToolTip": "WindowsFormsApp1\\Form1.cs",
-              "ViewState": "AgIAAHEAAAAAAAAAAAAYwOcAAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAADMAAAAAAAAAAAASwD0AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-08T10:42:54.851Z",
               "IsPinned": true,
@@ -51,45 +55,55 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Form1.cs [Dise\u00F1o]",
-              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.cs",
-              "RelativeDocumentMoniker": "WindowsFormsApp1\\Form1.cs",
-              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.cs [Dise\u00F1o]",
-              "RelativeToolTip": "WindowsFormsApp1\\Form1.cs [Dise\u00F1o]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-08T10:38:42.474Z",
-              "EditorCaption": " [Dise\u00F1o]"
+              "DocumentIndex": 0,
+              "Title": "detectarObjetos.py",
+              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\detectarObjetos.py",
+              "RelativeDocumentMoniker": "WindowsFormsApp1\\detectarObjetos.py",
+              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\detectarObjetos.py",
+              "RelativeToolTip": "WindowsFormsApp1\\detectarObjetos.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-03T13:29:04.428Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Form1.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.Designer.cs",
-              "RelativeDocumentMoniker": "WindowsFormsApp1\\Form1.Designer.cs",
-              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.Designer.cs",
-              "RelativeToolTip": "WindowsFormsApp1\\Form1.Designer.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAgwBMAAAAMAAAAAAAAAA==",
+              "Title": "Form1.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.cs",
+              "RelativeDocumentMoniker": "WindowsFormsApp1\\Form1.cs",
+              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.cs [Dise\u00F1o]",
+              "RelativeToolTip": "WindowsFormsApp1\\Form1.cs [Dise\u00F1o]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-29T11:49:59.576Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-08T10:38:42.474Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "detectar_mano.py",
-              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\detectar_mano.py",
-              "RelativeDocumentMoniker": "WindowsFormsApp1\\detectar_mano.py",
-              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\detectar_mano.py",
-              "RelativeToolTip": "WindowsFormsApp1\\detectar_mano.py",
-              "ViewState": "AgIAABoAAAAAAAAAAAAAwCEAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-10-28T11:09:26.897Z",
-              "EditorCaption": ""
+              "Title": "Form1.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.Designer.cs",
+              "RelativeDocumentMoniker": "WindowsFormsApp1\\Form1.Designer.cs",
+              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\Form1.Designer.cs",
+              "RelativeToolTip": "WindowsFormsApp1\\Form1.Designer.cs",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAAwJEAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-29T11:49:59.576Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
+              "Title": "detectar_mano.py",
+              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\detectar_mano.py",
+              "RelativeDocumentMoniker": "WindowsFormsApp1\\detectar_mano.py",
+              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\detectar_mano.py",
+              "RelativeToolTip": "WindowsFormsApp1\\detectar_mano.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-28T11:09:26.897Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "Dron.cs",
               "DocumentMoniker": "C:\\Users\\CARLA\\AppData\\Local\\Temp\\.vsdbgsrc\\20b089320d02ccb3a37ac07c44491d3acd916d76ce91e37c6049d31017f20354\\Dron.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\20b089320d02ccb3a37ac07c44491d3acd916d76ce91e37c6049d31017f20354\\Dron.cs",
@@ -101,11 +115,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\Program.cs",
               "RelativeDocumentMoniker": "WindowsFormsApp1\\Program.cs",
-              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_gestos\\WindowsFormsApp1\\WindowsFormsApp1\\Program.cs",
+              "ToolTip": "C:\\Users\\CARLA\\Desktop\\UNIVERSITAT\\TFG\\TFG-Reconocimiento_de_objetos2\\WindowsFormsApp1\\WindowsFormsApp1\\Program.cs",
               "RelativeToolTip": "WindowsFormsApp1\\Program.cs",
               "ViewState": "AgIAAAkAAAAAAAAAAAAkwBIAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
