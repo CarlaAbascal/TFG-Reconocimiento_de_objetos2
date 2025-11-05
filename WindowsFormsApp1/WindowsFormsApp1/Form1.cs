@@ -1,16 +1,17 @@
-﻿using System;
+﻿using csDronLink;
+using OpenCvSharp;
+using OpenCvSharp.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using csDronLink;
-using OpenCvSharp;
-using OpenCvSharp.Extensions;
-using System.IO;
-using System.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 
 namespace WindowsFormsApp1
@@ -23,6 +24,8 @@ namespace WindowsFormsApp1
         private VideoCapture capPC;
         private VideoCapture capDron;
         private bool running = false;
+        private bool videoServerObjetosRunning = false;
+
 
         // TCP SERVER
         private TcpListener listener;
@@ -161,7 +164,7 @@ namespace WindowsFormsApp1
         }
 
         // ==========================
-        //     ARRANCAR SCRIPT PYTHON
+        //     ARRANCAR SCRIPT PYTHON --- GESTOS
         // ==========================
         private System.Diagnostics.Process pythonProcess;
 
@@ -235,7 +238,7 @@ namespace WindowsFormsApp1
         private TcpListener videoListener;
         private bool videoServerRunning = false;
 
-        private void IniciarServidorVideo()
+        private void IniciarServidorVideoGestos()
 {
     Task.Run(() =>
     {
@@ -315,6 +318,89 @@ namespace WindowsFormsApp1
     });
 }
 
+
+        private void IniciarServidorVideoObjetos()
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    int puerto = 5006;
+                    videoListener = new TcpListener(IPAddress.Parse("127.0.0.1"), puerto);
+                    videoListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                    videoListener.Start();
+                    videoServerRunning = true;
+                    listBox1.Items.Add($"Servidor de video (objetos) iniciado en puerto {puerto}...");
+
+                    while (videoServerRunning)
+                    {
+                        TcpClient client = videoListener.AcceptTcpClient();
+                        listBox1.Items.Add("Cliente de video (objetos) conectado desde Python.");
+
+                        try
+                        {
+                            NetworkStream stream = client.GetStream();
+                            byte[] lengthBuffer = new byte[4];
+
+                            while (videoServerRunning && client.Connected)
+                            {
+                                int bytesRead = stream.Read(lengthBuffer, 0, 4);
+                                if (bytesRead < 4) break;
+
+                                int length = BitConverter.ToInt32(lengthBuffer.Reverse().ToArray(), 0);
+                                if (length <= 0) continue;
+
+                                byte[] imageBuffer = new byte[length];
+                                int totalBytes = 0;
+
+                                while (totalBytes < length)
+                                {
+                                    int read = stream.Read(imageBuffer, totalBytes, length - totalBytes);
+                                    if (read <= 0) break;
+                                    totalBytes += read;
+                                }
+
+                                if (totalBytes == length)
+                                {
+                                    using (var ms = new MemoryStream(imageBuffer))
+                                    {
+                                        try
+                                        {
+                                            var bmp = new Bitmap(ms);
+                                            // 👇 CAMBIO IMPORTANTE:
+                                            pictureBoxPC.Invoke(new Action(() =>
+                                            {
+                                                pictureBoxPC.Image?.Dispose();
+                                                pictureBoxPC.Image = new Bitmap(bmp);
+                                            }));
+                                        }
+                                        catch
+                                        {
+                                            listBox1.Items.Add("⚠️ Frame de objetos inválido.");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            listBox1.Items.Add($"⚠️ Error en la conexión de video (objetos): {ex.Message}");
+                        }
+                        finally
+                        {
+                            client.Close();
+                            listBox1.Items.Add("Cliente de video (objetos) desconectado.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    listBox1.Items.Add($"❌ Error en servidor de video (objetos): {ex.Message}");
+                }
+            });
+        }
+
+
         // ==========================
         //     ACCIONES POR GESTO
         // ==========================
@@ -369,7 +455,10 @@ namespace WindowsFormsApp1
         {
 
         }
-        //-----Boton Gestos-----
+
+        // ==========================
+        //     BOTÓN GESTOS
+        // ==========================
         private async void btnGestos_Click(object sender, EventArgs e)
         {
             // Si el modo gestos ya está activo → detenerlo
@@ -408,7 +497,7 @@ namespace WindowsFormsApp1
             if (!serverRunning)
                 IniciarServidorTCP();
             if (!videoServerRunning)
-                IniciarServidorVideo();
+                IniciarServidorVideoGestos();
 
             IniciarScriptPython(); // tu método para detectar_mano.py
             modoGestosActivo = true;
@@ -416,8 +505,6 @@ namespace WindowsFormsApp1
             btnGestos.BackColor = Color.LightGreen;
         }
 
-
-        //-----------------OBJETOS---------------------
 
         // ==========================
         //     BOTÓN OBJETOS
@@ -461,8 +548,12 @@ namespace WindowsFormsApp1
             if (!serverObjetosRunning)
                 IniciarServidorObjetos();
 
+            // Iniciar servidor de vídeo de objetos
+            if (!videoServerObjetosRunning)
+                IniciarServidorVideoObjetos();
+
             // Esperar a que el servidor levante el puerto
-            await Task.Delay(2000); // ⚠️ este delay es CLAVE
+            await Task.Delay(2000);
 
             IniciarScriptPythonObjetos(); // método que lanza detectarObjetos.py
             modoObjetosActivo = true;
@@ -538,7 +629,7 @@ namespace WindowsFormsApp1
             try
             {
                 string pythonExe = @"C:\Users\CARLA\AppData\Local\Programs\Python\Python310\python.exe";
-                string scriptPath = Path.Combine(Application.StartupPath, "detectarObjetos.py"); // ✅ Ruta relativa al .exe
+                string scriptPath = @"C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\detectarObjetos.py";
 
                 if (!File.Exists(scriptPath))
                 {
@@ -560,8 +651,25 @@ namespace WindowsFormsApp1
                 pythonObjetosProcess.OutputDataReceived += (s, e) =>
                 {
                     if (!string.IsNullOrEmpty(e.Data))
-                        listBox1.Items.Add($"[Python Objetos]: {e.Data}");
+                    {
+                        string line = e.Data.Trim();
+
+                        // 🔹 Ignorar mensajes técnicos de YOLO / ultralytics
+                        if (line.Contains("Downloading") ||
+                            line.Contains("https://github.com/ultralytics") ||
+                            line.Contains("Ultralytics") ||
+                            line.StartsWith("INFO") ||
+                            line.StartsWith("[INFO]") ||
+                            line.StartsWith("[K") ||
+                            line.Contains("requirements") ||
+                            line.Contains("update available"))
+                            return;
+
+                        // 🔹 Mostrar solo lo relevante
+                        listBox1.Items.Add($"[Python Objetos]: {line}");
+                    }
                 };
+
                 pythonObjetosProcess.ErrorDataReceived += (s, e) =>
                 {
                     if (!string.IsNullOrEmpty(e.Data))
@@ -607,6 +715,9 @@ namespace WindowsFormsApp1
         
         }
 
+        private void pictureBoxPC_Click(object sender, EventArgs e)
+        {
 
+        }
     }
 }

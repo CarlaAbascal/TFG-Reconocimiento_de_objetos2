@@ -1,107 +1,106 @@
-import cv2 as cv
-import torch
+"""
+detectarObjetos.py
+------------------
+Detección de objetos con YOLOv8 (ultralytics).
+Envía el nombre del objeto detectado y el vídeo al proyecto C# por sockets TCP.
+"""
+
+import cv2
 import socket
 import struct
-import pickle
 import time
 import sys
 
-# --- CONFIGURACIÓN TCP ---
+# ---------------------------- CONFIGURACIÓN TCP ----------------------------
 HOST = "127.0.0.1"
-PORT_DATA = 5007        # mensajes (objetos detectados)
-PORT_VIDEO = 5006       # streaming de vídeo (igual que el de gestos)
+PORT_DATA = 5007   # envío de texto (nombre del objeto)
+PORT_VIDEO = 5006  # streaming de vídeo
 
 sys.stdout.reconfigure(encoding='utf-8')
-time.sleep(2)
 
-# --- CONEXIÓN CON C# (mensajes) ---
+# ---------------------------- CONEXIONES ----------------------------
 try:
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((HOST, PORT_DATA))
-    print(f"Conectado al servidor C# en {HOST}:{PORT_DATA}", flush=True)
+    sock_data = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_data.connect((HOST, PORT_DATA))
+    print("[OK] Conectado al servidor de datos C#")
 except Exception as e:
-    print(f"Error al conectar con el servidor C#: {e}", flush=True)
+    print(f"[ERROR] No se pudo conectar al servidor de datos: {e}")
     sys.exit(1)
 
-# --- CONEXIÓN CON C# (vídeo) ---
 try:
-    video_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    video_socket.connect((HOST, PORT_VIDEO))
-    print(f"Conectado al servidor de vídeo en puerto {PORT_VIDEO}", flush=True)
+    sock_video = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock_video.connect((HOST, PORT_VIDEO))
+    print("[OK] Conectado al servidor de vídeo C#")
 except Exception as e:
-    print(f"Error al conectar con el servidor de vídeo: {e}", flush=True)
-    client.close()
+    print(f"[ERROR] No se pudo conectar al servidor de vídeo: {e}")
+    sock_data.close()
     sys.exit(1)
 
-# --- CARGA DEL MODELO YOLO ---
+# ---------------------------- MODELO YOLOv8 ----------------------------
 try:
-    print("Cargando modelo YOLOv5s...", flush=True)
-    model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+    from ultralytics import YOLO
+    model = YOLO("yolov8n.pt")  # modelo ligero (se descarga solo una vez)
+    print("[OK] Modelo YOLOv8 cargado correctamente.")
 except Exception as e:
-    print(f"Error al cargar YOLOv5: {e}", flush=True)
-    client.close()
-    video_socket.close()
+    print(f"[ERROR] No se pudo cargar el modelo YOLO: {e}")
+    sock_data.close()
+    sock_video.close()
     sys.exit(1)
 
-# --- ABRIR CÁMARA ---
-cap = cv.VideoCapture(0)
+# ---------------------------- INICIAR CÁMARA ----------------------------
+cap = cv2.VideoCapture(0)
 if not cap.isOpened():
-    print("No se pudo abrir la cámara.", flush=True)
-    client.close()
-    video_socket.close()
+    print("[ERROR] No se puede abrir la cámara.")
+    sock_data.close()
+    sock_video.close()
     sys.exit(1)
-else:
-    print("Cámara abierta correctamente.", flush=True)
 
-# --- IDS DE OBJETOS ---
-BANANA_CLASS_ID = 46
-CARROT_CLASS_ID = 51
-DONUT_CLASS_ID = 54
-FORK_CLASS_ID = 42
-CLOCK_CLASS_ID = 74
-PIZZA_CLASS_ID = 53
+print("[OK] Cámara iniciada correctamente.")
 
-# --- BUCLE PRINCIPAL ---
-while cap.isOpened():
+# ---------------------------- CONTROL DE ENVÍO ----------------------------
+ultimo_objeto = None
+ultimo_tiempo = 0
+DELAY = 1.0  # segundos entre envíos repetidos
+
+# ---------------------------- BUCLE PRINCIPAL ----------------------------
+while True:
     ret, frame = cap.read()
     if not ret:
-        print("No se pudo leer frame de la cámara.", flush=True)
+        print("[ERROR] No se pudo leer el frame de la cámara.")
         break
 
-    img_rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-    results = model(img_rgb)
-    detected = None
+    # Detección de objetos
+    results = model(frame, verbose=False)
+    if len(results) > 0:
+        for box in results[0].boxes:
+            clase = int(box.cls[0])
+            nombre = results[0].names.get(clase, "desconocido")
+            conf = float(box.conf[0])
 
-    for *box, conf, cls in results.xyxy[0]:
-        obj = int(cls.item())
-        if obj == BANANA_CLASS_ID: detected = "BANANA"
-        elif obj == CLOCK_CLASS_ID: detected = "RELOJ"
-        elif obj == DONUT_CLASS_ID: detected = "DONUT"
-        elif obj == CARROT_CLASS_ID: detected = "ZANAHORIA"
-        elif obj == PIZZA_CLASS_ID: detected = "PIZZA"
-        elif obj == FORK_CLASS_ID: detected = "TENEDOR"
+            # solo si la confianza es alta
+            if conf > 0.6:
+                ahora = time.time()
+                if nombre != ultimo_objeto or (ahora - ultimo_tiempo) > DELAY:
+                    sock_data.sendall((nombre + "\n").encode("utf-8"))
+                    print(f"[OBJETO] Enviado: {nombre}")
+                    ultimo_objeto = nombre
+                    ultimo_tiempo = ahora
+                break
 
-        if detected:
-            msg = detected + "\n"
-            client.sendall(msg.encode("utf-8"))
-            print(f"Enviado: {detected}", flush=True)
-            break
-
-    # --- Enviar frame comprimido al servidor C# ---
+    # Enviar frame a C#
     try:
-        _, encoded = cv.imencode('.jpg', frame)
-        data = pickle.dumps(encoded, protocol=pickle.HIGHEST_PROTOCOL)
-        size = struct.pack(">L", len(data))
-        video_socket.sendall(size + data)
-    except Exception as e:
-        print(f"Error enviando frame: {e}", flush=True)
+        _, buffer = cv2.imencode('.jpg', frame)
+        data = buffer.tobytes()
+        sock_video.sendall(struct.pack('>L', len(data)) + data)
+    except (BrokenPipeError, ConnectionResetError):
+        print("[ERROR] Conexión de vídeo cerrada por C#.")
         break
 
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+# ---------------------------- FINALIZAR ----------------------------
 cap.release()
-client.close()
-video_socket.close()
-cv.destroyAllWindows()
-print("Script finalizado correctamente.", flush=True)
+sock_data.close()
+sock_video.close()
+print("[INFO] Script finalizado correctamente.")

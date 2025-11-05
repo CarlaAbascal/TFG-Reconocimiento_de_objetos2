@@ -16,7 +16,17 @@ Clon del repo TFG-Reconocimiento\_de\_gestos
 
 
 
-Botón reconocimiento de gestos OK 
+Botón reconocimiento de gestos OK
 
 Botón reconocimiento de objetos KO
+
+
+
+
+
+-------Versión 1.3----------
+
+
+
+Funcionamiento OK de reconocimiento de objetos 
 

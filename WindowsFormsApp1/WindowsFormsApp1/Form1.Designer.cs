@@ -94,6 +94,7 @@
             this.pictureBoxPC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxPC.TabIndex = 5;
             this.pictureBoxPC.TabStop = false;
+            this.pictureBoxPC.Click += new System.EventHandler(this.pictureBoxPC_Click);
             // 
             // label1
             // 
@@ -123,7 +124,7 @@
             this.listBox1.ItemHeight = 23;
             this.listBox1.Location = new System.Drawing.Point(807, 94);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(673, 303);
+            this.listBox1.Size = new System.Drawing.Size(685, 303);
             this.listBox1.TabIndex = 11;
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
@@ -148,13 +149,12 @@
             this.btnObjetos.Text = "Reconocimiento de objetos ";
             this.btnObjetos.UseVisualStyleBackColor = true;
             this.btnObjetos.Click += new System.EventHandler(this.btnObjetos_Click);
-
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1553, 552);
+            this.ClientSize = new System.Drawing.Size(1542, 552);
             this.Controls.Add(this.btnObjetos);
             this.Controls.Add(this.btnGestos);
             this.Controls.Add(this.listBox1);
