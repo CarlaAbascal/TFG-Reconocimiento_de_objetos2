@@ -38,13 +38,14 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.btnGestos = new System.Windows.Forms.Button();
             this.btnObjetos = new System.Windows.Forms.Button();
+            this.btnDetener = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPC)).BeginInit();
             this.SuspendLayout();
             // 
             // altLbl
             // 
             this.altLbl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.altLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.altLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.altLbl.ForeColor = System.Drawing.Color.Red;
             this.altLbl.Location = new System.Drawing.Point(22, 309);
             this.altLbl.Name = "altLbl";
@@ -53,9 +54,9 @@
             this.altLbl.Text = "0";
             this.altLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // button1
+            // button1 (Conectar)
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.button1.Location = new System.Drawing.Point(22, 38);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(178, 50);
@@ -64,9 +65,9 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // button2
+            // button2 (Despegar)
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.button2.Location = new System.Drawing.Point(22, 94);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(178, 50);
@@ -75,9 +76,9 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // button3 (Aterrizar)
             // 
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.button3.Location = new System.Drawing.Point(22, 150);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(178, 50);
@@ -94,9 +95,8 @@
             this.pictureBoxPC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxPC.TabIndex = 5;
             this.pictureBoxPC.TabStop = false;
-            this.pictureBoxPC.Click += new System.EventHandler(this.pictureBoxPC_Click);
             // 
-            // label1
+            // label1 (Video PC)
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(442, 113);
@@ -116,9 +116,9 @@
             this.labelEstado.TabIndex = 10;
             this.labelEstado.Text = "Esperando gesto...";
             // 
-            // listBox1
+            // listBox1 (Logs)
             // 
-            this.listBox1.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listBox1.Font = new System.Drawing.Font("Consolas", 10F);
             this.listBox1.FormattingEnabled = true;
             this.listBox1.HorizontalScrollbar = true;
             this.listBox1.ItemHeight = 23;
@@ -126,11 +126,10 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(685, 303);
             this.listBox1.TabIndex = 11;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // btnGestos
             // 
-            this.btnGestos.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGestos.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnGestos.Location = new System.Drawing.Point(282, 12);
             this.btnGestos.Name = "btnGestos";
             this.btnGestos.Size = new System.Drawing.Size(219, 79);
@@ -146,15 +145,27 @@
             this.btnObjetos.Name = "btnObjetos";
             this.btnObjetos.Size = new System.Drawing.Size(223, 79);
             this.btnObjetos.TabIndex = 13;
-            this.btnObjetos.Text = "Reconocimiento de objetos ";
+            this.btnObjetos.Text = "Reconocimiento de objetos";
             this.btnObjetos.UseVisualStyleBackColor = true;
             this.btnObjetos.Click += new System.EventHandler(this.btnObjetos_Click);
+            // 
+            // btnDetener
+            // 
+            this.btnDetener.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnDetener.Location = new System.Drawing.Point(736, 12);
+            this.btnDetener.Name = "btnDetener";
+            this.btnDetener.Size = new System.Drawing.Size(223, 79);
+            this.btnDetener.TabIndex = 14;
+            this.btnDetener.Text = "Detener scripts";
+            this.btnDetener.UseVisualStyleBackColor = true;
+            this.btnDetener.Click += new System.EventHandler(this.btnDetener_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1542, 552);
+            this.Controls.Add(this.btnDetener);
             this.Controls.Add(this.btnObjetos);
             this.Controls.Add(this.btnGestos);
             this.Controls.Add(this.listBox1);
@@ -180,13 +191,11 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.PictureBox pictureBoxPC;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelEstado;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button btnGestos;
         private System.Windows.Forms.Button btnObjetos;
-
+        private System.Windows.Forms.Button btnDetener;
     }
 }
-

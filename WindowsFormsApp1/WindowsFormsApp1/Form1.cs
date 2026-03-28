@@ -7,12 +7,18 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
+// >>> WEBRTC (ver vídeo en local dentro del Form)
+using Microsoft.Web.WebView2.WinForms;
+using System.Diagnostics;
+
+// >>> MQTT
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Client.Options;
 
 namespace WindowsFormsApp1
 {
@@ -20,35 +26,56 @@ namespace WindowsFormsApp1
     {
         Dron miDron = new Dron();
 
-        // STREAMING
-        private VideoCapture capPC;
-        private VideoCapture capDron;
-        private bool running = false;
-        private bool videoServerObjetosRunning = false;
+        // >>> WEBRTC: viewer dentro del formulario
+        private WebView2 webViewRTC;
 
+        // >>> WEBRTC: procesos python (server + publisher)
+        private Process webrtcServerProcess;
+        private Process webrtcPublisherProcess;
 
-        // TCP SERVER
-        private TcpListener listener;
-        private bool serverRunning = false;
+        // >>> MQTT
+        private IMqttClient mqttClient;
+        private bool mqttConnected = false;
+
+        // Estados
+        private bool modoGestosActivo = false;
+        private bool modoObjetosActivo = false;
+
+        Process procesoGestos;
+        Process procesoObjetos;
+
+        // Ruta del Python del entorno virtual mp_env
+        string rutaPython = @"C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\mp_env\Scripts\python.exe";
 
         public Form1()
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
 
-            // 🔹 Aquí llamamos manualmente al método de carga
-           // Form1_Load(this, EventArgs.Empty);
-        }
+            // >>> WEBRTC: crear WebView2 en el mismo sitio que el pictureBoxPC
+            webViewRTC = new WebView2();
+            webViewRTC.Left = pictureBoxPC.Left;
+            webViewRTC.Top = pictureBoxPC.Top;
+            webViewRTC.Width = pictureBoxPC.Width;
+            webViewRTC.Height = pictureBoxPC.Height;
+            webViewRTC.Anchor = pictureBoxPC.Anchor;
 
-        // ==========================
-        //     INICIALIZACIÓN
-        // ==========================
-      
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            // Se inicia vacío: los servidores se lanzan solo al pulsar los botones.
-        }
+            this.Controls.Add(webViewRTC);
+            webViewRTC.BringToFront();
 
+            this.Load += async (_, __) =>
+            {
+                try
+                {
+                    await webViewRTC.EnsureCoreWebView2Async();
+                    webViewRTC.Source = new Uri("http://localhost:8080/");
+                }
+                catch (Exception ex)
+                {
+                    listBox1.Items.Add($"⚠️ Error inicializando WebView2: {ex.Message}");
+                }
+            };
+        }
 
         // ==========================
         //     TELEMETRÍA
@@ -92,312 +119,80 @@ namespace WindowsFormsApp1
             miDron.Aterrizar(bloquear: false);
         }
 
-        private bool sistemaActivo = false;
-
-
         // ==========================
-        //     TCP SERVER GESTOS
+        //     MQTT (GESTOS + OBJETOS)
         // ==========================
-        private void IniciarServidorTCP()
-        {
-            if (serverRunning)
-            {
-                listBox1.Items.Add("⚠️ El servidor TCP ya está en ejecución.");
-                return;
-            }
-
-            Task.Run(() =>
-            {
-                try
-                {
-                    int puerto = 5005;
-                    listener = new TcpListener(IPAddress.Parse("127.0.0.1"), puerto);
-                    listener.Start();
-                    serverRunning = true;
-
-                    listBox1.Items.Add($"Servidor TCP iniciado en puerto {puerto}");
-
-                    while (serverRunning)
-                    {
-                        TcpClient client = listener.AcceptTcpClient();
-                        listBox1.Items.Add("Cliente conectado desde Python.");
-
-                        NetworkStream stream = client.GetStream();
-                        byte[] buffer = new byte[1024];
-
-                        StringBuilder sb = new StringBuilder();
-
-                        while (client.Connected)
-                        {
-                            int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                            if (bytesRead == 0) break;
-
-                            string data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                            sb.Append(data);
-
-                            // Procesar cada línea completa (cada gesto termina con '\n')
-                            while (sb.ToString().Contains("\n"))
-                            {
-                                string line = sb.ToString();
-                                int index = line.IndexOf('\n');
-                                string mensaje = line.Substring(0, index).Trim();
-                                sb.Remove(0, index + 1);
-
-                                if (!string.IsNullOrWhiteSpace(mensaje))
-                                {
-                                    listBox1.Items.Add($"Gesto recibido: {mensaje}");
-                                    EjecutarAccionPorGesto(mensaje);
-                                }
-                            }
-                        }
-
-
-                        client.Close();
-                        listBox1.Items.Add("Cliente desconectado.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    listBox1.Items.Add($"Error en servidor TCP: {ex.Message}");
-                }
-            });
-        }
-
-        // ==========================
-        //     ARRANCAR SCRIPT PYTHON --- GESTOS
-        // ==========================
-        private System.Diagnostics.Process pythonProcess;
-
-        private void IniciarScriptPython()
+        private async void IniciarMQTT()
         {
             try
             {
-                string pythonExe = @"C:\Users\CARLA\AppData\Local\Programs\Python\Python310\python.exe";
-                string scriptPath = @"C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\TFG-Reconocimiento_de_gestos\WindowsFormsApp1\WindowsFormsApp1\detectar_mano.py";
+                var factory = new MqttFactory();
+                mqttClient = factory.CreateMqttClient();
 
-                var psi = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = pythonExe,
-                    Arguments = $"\"{scriptPath}\"",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
+                var options = new MqttClientOptionsBuilder()
+                    .WithTcpServer("127.0.0.1", 1883)
+                    .Build();
 
-                pythonProcess = new System.Diagnostics.Process { StartInfo = psi };
-                pythonProcess.OutputDataReceived += (s, e) =>
+                mqttClient.UseConnectedHandler(async e =>
                 {
-                    if (!string.IsNullOrEmpty(e.Data))
+                    mqttConnected = true;
+                    listBox1.Items.Add("MQTT connectat al broker.");
+
+                    await mqttClient.SubscribeAsync("gestos");
+                    listBox1.Items.Add("Subscrita al tema 'gestos'.");
+
+                    await mqttClient.SubscribeAsync("objetos");
+                    listBox1.Items.Add("Subscrita al tema 'objetos'.");
+                });
+
+                mqttClient.UseApplicationMessageReceivedHandler(e =>
+                {
+                    string topic = e.ApplicationMessage.Topic;
+                    string mensaje = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+
+                    if (topic == "gestos")
                     {
-                        // Filtrar mensajes técnicos irrelevantes
-                        string line = e.Data.Trim();
-                        if (line.StartsWith("W0000") || line.Contains("inference_feedback_manager"))
-                            return; // Ignorar avisos internos de MediaPipe
-                        if (line.Contains("INFO") || line.Contains("DEBUG") ||
-                            line.Contains("MediaPipe") || line.Contains("TensorFlow"))
-                            return; // Ignorar mensajes del framework
-
-                        // Mostrar solo mensajes útiles
-                        listBox1.Items.Add($"[Python]: {line}");
+                        listBox1.Items.Add($"Gesto rebut per MQTT: {mensaje}");
+                        EjecutarAccionPorGesto(mensaje);
                     }
-                };
-
-                pythonProcess.ErrorDataReceived += (s, e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Data))
+                    else if (topic == "objetos")
                     {
-                        string line = e.Data.Trim();
-                        // Ignorar advertencias y logs ruidosos
-                        if (line.Contains("TensorFlow") || line.Contains("XNNPACK") ||
-                            line.Contains("WARNING") || line.Contains("DeprecationWarning") ||
-                            line.StartsWith("W0000") || line.Contains("inference_feedback_manager"))
-                            return;
-
-                        // Mostrar solo errores relevantes
-                        listBox1.Items.Add($"⚠️ {line}");
+                        listBox1.Items.Add($"Objeto detectado por MQTT: {mensaje}");
+                        // No hay acción asociada (solo mostrar)
                     }
-                };
+                });
 
-
-                pythonProcess.Start();
-                pythonProcess.BeginOutputReadLine();
-                pythonProcess.BeginErrorReadLine();
-
-                listBox1.Items.Add("✅ Script Python iniciado correctamente.");
+                await mqttClient.ConnectAsync(options);
             }
             catch (Exception ex)
             {
-                listBox1.Items.Add($"❌ Error al iniciar script Python: {ex.Message}");
+                listBox1.Items.Add($"❌ Error connectant MQTT: {ex.Message}");
             }
         }
 
         // ==========================
-        //     VIDEO DESDE PYTHON
+        //     BOTÓN GESTOS (MQTT)
         // ==========================
-        private TcpListener videoListener;
-        private bool videoServerRunning = false;
-
-        private void IniciarServidorVideoGestos()
-{
-    Task.Run(() =>
-    {
-        try
+        private void btnGestos_Click(object sender, EventArgs e)
         {
-            int puerto = 5006; // debe coincidir con Python
-            videoListener = new TcpListener(IPAddress.Parse("127.0.0.1"), puerto);
-            videoListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            videoListener.Start();
-            videoServerRunning = true;
-            listBox1.Items.Add($"Servidor de video iniciado en puerto {puerto}...");
-
-            while (videoServerRunning)
+            // Detener objetos si están activos
+            if (procesoObjetos != null && !procesoObjetos.HasExited)
             {
-                TcpClient client = videoListener.AcceptTcpClient();
-                listBox1.Items.Add("Cliente de video conectado desde Python.");
-
-                try
-                {
-                    NetworkStream stream = client.GetStream();
-                    byte[] lengthBuffer = new byte[4];
-
-                    while (videoServerRunning && client.Connected)
-                    {
-                        int bytesRead = stream.Read(lengthBuffer, 0, 4);
-                        if (bytesRead < 4) break; // lectura parcial -> esperar nuevo cliente
-
-                        int length = BitConverter.ToInt32(lengthBuffer.Reverse().ToArray(), 0);
-                        if (length <= 0) continue;
-
-                        byte[] imageBuffer = new byte[length];
-                        int totalBytes = 0;
-
-                        while (totalBytes < length)
-                        {
-                            int read = stream.Read(imageBuffer, totalBytes, length - totalBytes);
-                            if (read <= 0) break;
-                            totalBytes += read;
-                        }
-
-                        if (totalBytes == length)
-                        {
-                            using (var ms = new MemoryStream(imageBuffer))
-                            {
-                                try
-                                {
-                                    var bmp = new Bitmap(ms);
-                                    pictureBoxPC.Invoke(new Action(() =>
-                                    {
-                                        pictureBoxPC.Image?.Dispose();
-                                        pictureBoxPC.Image = new Bitmap(bmp);
-                                    }));
-                                }
-                                catch
-                                {
-                                    listBox1.Items.Add("⚠️ Frame recibido inválido.");
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    listBox1.Items.Add($"⚠️ Error en la conexión de video: {ex.Message}");
-                }
-                finally
-                {
-                    client.Close();
-                    listBox1.Items.Add("Cliente de video desconectado. Esperando nueva conexión...");
-                }
+                procesoObjetos.Kill();
+                procesoObjetos.Dispose();
+                procesoObjetos = null;
+                listBox1.Items.Add("[INFO] Script de objetos detenido.");
             }
-        }
-        catch (Exception ex)
-        {
-            listBox1.Items.Add($"❌ Error en servidor de video: {ex.Message}");
-        }
-    });
-}
 
-
-        private void IniciarServidorVideoObjetos()
-        {
-            Task.Run(() =>
-            {
-                try
-                {
-                    int puerto = 5006;
-                    videoListener = new TcpListener(IPAddress.Parse("127.0.0.1"), puerto);
-                    videoListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                    videoListener.Start();
-                    videoServerRunning = true;
-                    listBox1.Items.Add($"Servidor de video (objetos) iniciado en puerto {puerto}...");
-
-                    while (videoServerRunning)
-                    {
-                        TcpClient client = videoListener.AcceptTcpClient();
-                        listBox1.Items.Add("Cliente de video (objetos) conectado desde Python.");
-
-                        try
-                        {
-                            NetworkStream stream = client.GetStream();
-                            byte[] lengthBuffer = new byte[4];
-
-                            while (videoServerRunning && client.Connected)
-                            {
-                                int bytesRead = stream.Read(lengthBuffer, 0, 4);
-                                if (bytesRead < 4) break;
-
-                                int length = BitConverter.ToInt32(lengthBuffer.Reverse().ToArray(), 0);
-                                if (length <= 0) continue;
-
-                                byte[] imageBuffer = new byte[length];
-                                int totalBytes = 0;
-
-                                while (totalBytes < length)
-                                {
-                                    int read = stream.Read(imageBuffer, totalBytes, length - totalBytes);
-                                    if (read <= 0) break;
-                                    totalBytes += read;
-                                }
-
-                                if (totalBytes == length)
-                                {
-                                    using (var ms = new MemoryStream(imageBuffer))
-                                    {
-                                        try
-                                        {
-                                            var bmp = new Bitmap(ms);
-                                            // 👇 CAMBIO IMPORTANTE:
-                                            pictureBoxPC.Invoke(new Action(() =>
-                                            {
-                                                pictureBoxPC.Image?.Dispose();
-                                                pictureBoxPC.Image = new Bitmap(bmp);
-                                            }));
-                                        }
-                                        catch
-                                        {
-                                            listBox1.Items.Add("⚠️ Frame de objetos inválido.");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            listBox1.Items.Add($"⚠️ Error en la conexión de video (objetos): {ex.Message}");
-                        }
-                        finally
-                        {
-                            client.Close();
-                            listBox1.Items.Add("Cliente de video (objetos) desconectado.");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    listBox1.Items.Add($"❌ Error en servidor de video (objetos): {ex.Message}");
-                }
-            });
+            // Iniciar gestos
+            procesoGestos = new Process();
+            procesoGestos.StartInfo.FileName = rutaPython;
+            procesoGestos.StartInfo.Arguments = "detectar_mano.py";
+            procesoGestos.StartInfo.WorkingDirectory = Application.StartupPath;
+            procesoGestos.StartInfo.UseShellExecute = false;
+            procesoGestos.StartInfo.CreateNoWindow = true;
+            procesoGestos.Start();
+            listBox1.Items.Add("[INFO] Script de gestos iniciado.");
         }
 
 
@@ -435,289 +230,110 @@ namespace WindowsFormsApp1
         }
 
         // ==========================
+        //     BOTÓN OBJETOS (WebRTC + MQTT)
+        // ==========================
+        private void btnObjetos_Click(object sender, EventArgs e)
+        {
+            // Detener gestos si están activos
+            if (procesoGestos != null && !procesoGestos.HasExited)
+            {
+                procesoGestos.Kill();
+                procesoGestos.Dispose();
+                procesoGestos = null;
+                listBox1.Items.Add("[INFO] Script de gestos detenido.");
+            }
+
+            // Iniciar objetos
+            procesoObjetos = new Process();
+            procesoObjetos.StartInfo.FileName = rutaPython;
+            procesoObjetos.StartInfo.Arguments = "detectarObjetos.py";
+            procesoObjetos.StartInfo.WorkingDirectory = Application.StartupPath;
+            procesoObjetos.StartInfo.UseShellExecute = false;
+            procesoObjetos.StartInfo.CreateNoWindow = true;
+            procesoObjetos.Start();
+            listBox1.Items.Add("[INFO] Script de objetos iniciado.");
+        }
+
+        // ==========================
+        //     BOTÓN DETENER TODOS 
+        // ==========================
+        private void btnDetener_Click(object sender, EventArgs e)
+        {
+            if (procesoGestos != null && !procesoGestos.HasExited)
+            {
+                procesoGestos.Kill();
+                procesoGestos.Dispose();
+                procesoGestos = null;
+                listBox1.Items.Add("[INFO] Script de gestos detenido.");
+            }
+
+            if (procesoObjetos != null && !procesoObjetos.HasExited)
+            {
+                procesoObjetos.Kill();
+                procesoObjetos.Dispose();
+                procesoObjetos = null;
+                listBox1.Items.Add("[INFO] Script de objetos detenido.");
+            }
+        }
+
+
+        // ==========================
+        //     START PROCESS
+        // ==========================
+        private Process StartProcess(string exe, string args, string tag, string workingDir)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = exe,
+                Arguments = args,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+                WorkingDirectory = workingDir
+            };
+
+            var p = new Process { StartInfo = psi };
+            p.OutputDataReceived += (s, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                    listBox1.Items.Add($"[{tag}] {e.Data}");
+            };
+            p.ErrorDataReceived += (s, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                    listBox1.Items.Add($"⚠️ [{tag}] {e.Data}");
+            };
+
+            p.Start();
+            p.BeginOutputReadLine();
+            p.BeginErrorReadLine();
+            return p;
+        }
+
+        // ==========================
         //     FORM CLOSING
         // ==========================
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            running = false;
-            serverRunning = false;
-            capPC?.Release();
-            capDron?.Release();
-            listener?.Stop();
+            try
+            {
+                if (mqttClient != null && mqttConnected)
+                    mqttClient.DisconnectAsync().Wait();
+            }
+            catch { }
 
-            if (pythonProcess != null && !pythonProcess.HasExited)
-                pythonProcess.Kill();  // Cierra el script al salir
+            try
+            {
+                if (webrtcPublisherProcess != null && !webrtcPublisherProcess.HasExited)
+                    webrtcPublisherProcess.Kill();
+
+                if (webrtcServerProcess != null && !webrtcServerProcess.HasExited)
+                    webrtcServerProcess.Kill();
+            }
+            catch { }
 
             base.OnFormClosing(e);
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        // ==========================
-        //     BOTÓN GESTOS
-        // ==========================
-        private async void btnGestos_Click(object sender, EventArgs e)
-        {
-            // Si el modo gestos ya está activo → detenerlo
-            if (modoGestosActivo)
-            {
-                listBox1.Items.Add("🛑 Deteniendo reconocimiento de gestos...");
-                DetenerScriptPython(pythonProcess);
-                serverRunning = false;
-                listener?.Stop();
-
-                // liberar vídeo
-                videoServerRunning = false;
-                videoListener?.Stop();
-
-                modoGestosActivo = false;
-                btnGestos.Text = "Reconocer Gestos";
-                btnGestos.BackColor = SystemColors.Control;
-                return;
-            }
-
-
-            // Si había un script de objetos, lo detenemos primero
-            if (modoObjetosActivo)
-            {
-                listBox1.Items.Add("⛔ Cerrando reconocimiento de objetos...");
-                DetenerScriptPython(pythonObjetosProcess);
-                modoObjetosActivo = false;
-                btnObjetos.Text = "Reconocer Objetos";
-                btnObjetos.BackColor = SystemColors.Control;
-                await Task.Delay(1000); // esperar a que se libere la cámara
-            }
-
-            listBox1.Items.Add("🖐 Activando reconocimiento de gestos...");
-
-            // Iniciar servidores (solo si no están activos)
-            if (!serverRunning)
-                IniciarServidorTCP();
-            if (!videoServerRunning)
-                IniciarServidorVideoGestos();
-
-            IniciarScriptPython(); // tu método para detectar_mano.py
-            modoGestosActivo = true;
-            btnGestos.Text = "Detener Gestos";
-            btnGestos.BackColor = Color.LightGreen;
-        }
-
-
-        // ==========================
-        //     BOTÓN OBJETOS
-        // ==========================
-        private TcpListener listenerObjetos;
-        private bool serverObjetosRunning = false;
-        private System.Diagnostics.Process pythonObjetosProcess;
-
-        private bool modoGestosActivo = false;
-        private bool modoObjetosActivo = false;
-
-        private async void btnObjetos_Click(object sender, EventArgs e)
-        {
-            // Si el modo objetos ya está activo → detenerlo
-            if (modoObjetosActivo)
-            {
-                listBox1.Items.Add("🛑 Deteniendo reconocimiento de objetos...");
-                DetenerScriptPython(pythonObjetosProcess);
-                serverObjetosRunning = false;
-                listenerObjetos?.Stop();
-                modoObjetosActivo = false;
-                btnObjetos.Text = "Reconocer Objetos";
-                btnObjetos.BackColor = SystemColors.Control;
-                return;
-            }
-
-            // Si había un script de gestos, lo detenemos primero
-            if (modoGestosActivo)
-            {
-                listBox1.Items.Add("⛔ Cerrando reconocimiento de gestos...");
-                DetenerScriptPython(pythonProcess);
-                modoGestosActivo = false;
-                btnGestos.Text = "Reconocer Gestos";
-                btnGestos.BackColor = SystemColors.Control;
-                await Task.Delay(1000); // esperar a que se libere la cámara
-            }
-
-            listBox1.Items.Add("🔍 Activando reconocimiento de objetos...");
-
-            // Iniciar servidor de objetos si no está activo
-            if (!serverObjetosRunning)
-                IniciarServidorObjetos();
-
-            // Iniciar servidor de vídeo de objetos
-            if (!videoServerObjetosRunning)
-                IniciarServidorVideoObjetos();
-
-            // Esperar a que el servidor levante el puerto
-            await Task.Delay(2000);
-
-            IniciarScriptPythonObjetos(); // método que lanza detectarObjetos.py
-            modoObjetosActivo = true;
-            btnObjetos.Text = "Detener Objetos";
-            btnObjetos.BackColor = Color.LightGreen;
-        }
-
-
-
-        // ==========================
-        //     SERVIDOR TCP OBJETOS
-        // ==========================
-        private void IniciarServidorObjetos()
-        {
-            Task.Run(() =>
-            {
-                try
-                {
-                    int puerto = 5007; // distinto al de gestos (5005)
-                    listenerObjetos = new TcpListener(IPAddress.Parse("127.0.0.1"), puerto);
-                    listenerObjetos.Start();
-                    serverObjetosRunning = true;
-                    listBox1.Items.Add($"Servidor TCP (objetos) iniciado en puerto {puerto}");
-
-                    while (serverObjetosRunning)
-                    {
-                        TcpClient client = listenerObjetos.AcceptTcpClient();
-                        listBox1.Items.Add("Cliente de objetos conectado desde Python.");
-
-                        NetworkStream stream = client.GetStream();
-                        byte[] buffer = new byte[1024];
-                        StringBuilder sb = new StringBuilder();
-
-                        while (client.Connected)
-                        {
-                            int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                            if (bytesRead == 0) break;
-
-                            string data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                            sb.Append(data);
-
-                            // Procesar mensajes separados por salto de línea
-                            while (sb.ToString().Contains("\n"))
-                            {
-                                string line = sb.ToString();
-                                int index = line.IndexOf('\n');
-                                string mensaje = line.Substring(0, index).Trim();
-                                sb.Remove(0, index + 1);
-
-                                if (!string.IsNullOrWhiteSpace(mensaje))
-                                {
-                                    listBox1.Items.Add($"🔍 Objeto detectado: {mensaje}");
-                                }
-                            }
-                        }
-
-                        client.Close();
-                        listBox1.Items.Add("Cliente de objetos desconectado.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    listBox1.Items.Add($"❌ Error en servidor de objetos: {ex.Message}");
-                }
-            });
-        }
-
-        // ==========================
-        //     SCRIPT PYTHON OBJETOS
-        // ==========================
-        private void IniciarScriptPythonObjetos()
-        {
-            try
-            {
-                string pythonExe = @"C:\Users\CARLA\AppData\Local\Programs\Python\Python310\python.exe";
-                string scriptPath = @"C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\detectarObjetos.py";
-
-                if (!File.Exists(scriptPath))
-                {
-                    listBox1.Items.Add($"❌ No se encontró el script en: {scriptPath}");
-                    return;
-                }
-
-                var psi = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = pythonExe,
-                    Arguments = $"\"{scriptPath}\"",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-
-                pythonObjetosProcess = new System.Diagnostics.Process { StartInfo = psi };
-                pythonObjetosProcess.OutputDataReceived += (s, e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Data))
-                    {
-                        string line = e.Data.Trim();
-
-                        // 🔹 Ignorar mensajes técnicos de YOLO / ultralytics
-                        if (line.Contains("Downloading") ||
-                            line.Contains("https://github.com/ultralytics") ||
-                            line.Contains("Ultralytics") ||
-                            line.StartsWith("INFO") ||
-                            line.StartsWith("[INFO]") ||
-                            line.StartsWith("[K") ||
-                            line.Contains("requirements") ||
-                            line.Contains("update available"))
-                            return;
-
-                        // 🔹 Mostrar solo lo relevante
-                        listBox1.Items.Add($"[Python Objetos]: {line}");
-                    }
-                };
-
-                pythonObjetosProcess.ErrorDataReceived += (s, e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Data))
-                        listBox1.Items.Add($"⚠️ [Error Python Objetos]: {e.Data}");
-                };
-
-                pythonObjetosProcess.Start();
-                pythonObjetosProcess.BeginOutputReadLine();
-                pythonObjetosProcess.BeginErrorReadLine();
-
-                listBox1.Items.Add("✅ Script de reconocimiento de objetos iniciado correctamente.");
-            }
-            catch (Exception ex)
-            {
-                listBox1.Items.Add($"❌ Error al iniciar script de objetos: {ex.Message}");
-            }
-        }
-
-
-        //-------------------DETENER SCRIPT----------------------
-        private void DetenerScriptPython(System.Diagnostics.Process proceso)
-        {
-            try
-            {
-                if (proceso != null && !proceso.HasExited)
-                {
-                    proceso.Kill();
-                    proceso.WaitForExit(); // 🔹 Esperar a que se cierre completamente
-                   // proceso.Dispose();
-                    listBox1.Items.Add("✅ Script Python detenido correctamente.");
-                }
-            }
-            catch (Exception ex)
-            {
-                listBox1.Items.Add($"⚠️ Error al detener script: {ex.Message}");
-            }
-            finally
-            {
-                proceso?.Dispose();
-                if (proceso == pythonProcess) { pythonProcess = null; modoGestosActivo = false; }
-                if (proceso == pythonObjetosProcess) { pythonObjetosProcess = null; modoObjetosActivo = false; }
-            }
-        
-        }
-
-        private void pictureBoxPC_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

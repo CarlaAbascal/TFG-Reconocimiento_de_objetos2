@@ -174,3 +174,89 @@ C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\TFG-Reconocimiento_de_objetos2\WindowsFor
 C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsF.A1EEDF9B.Up2Date
 C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe
 C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.pdb
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\dll\x86\OpenCvSharpExtern.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\dll\x86\opencv_videoio_ffmpeg4110.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\dll\x64\OpenCvSharpExtern.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\dll\x64\opencv_videoio_ffmpeg4110_64.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\detectar_mano.py
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe.config
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.pdb
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\csDronLink.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.Core.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.WinForms.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.Wpf.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\OpenCvSharp.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\OpenCvSharp.Extensions.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Buffers.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Drawing.Common.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Memory.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.Core.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.WinForms.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.Wpf.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\OpenCvSharp.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\OpenCvSharp.Extensions.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Buffers.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Drawing.Common.pdb
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Drawing.Common.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Memory.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.AssemblyReference.cache
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe.config
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Form1.resources
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Properties.Resources.resources
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.GenerateResource.cache
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.CoreCompileInputs.cache
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsF.A1EEDF9B.Up2Date
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.pdb
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA WebRTC objeto y gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\MQTTnet.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\dll\x86\OpenCvSharpExtern.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\dll\x86\opencv_videoio_ffmpeg4110.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\dll\x64\OpenCvSharpExtern.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\dll\x64\opencv_videoio_ffmpeg4110_64.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\detectar_mano.py
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe.config
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.pdb
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\csDronLink.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.Core.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.WinForms.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.Wpf.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\MQTTnet.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\OpenCvSharp.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\OpenCvSharp.Extensions.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Buffers.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Drawing.Common.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Memory.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.Core.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.WinForms.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\Microsoft.Web.WebView2.Wpf.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\OpenCvSharp.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\OpenCvSharp.Extensions.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Buffers.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Drawing.Common.pdb
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Drawing.Common.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Memory.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.AssemblyReference.cache
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe.config
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Form1.resources
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Properties.Resources.resources
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.GenerateResource.cache
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.CoreCompileInputs.cache
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsF.A1EEDF9B.Up2Date
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe
+C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.pdb

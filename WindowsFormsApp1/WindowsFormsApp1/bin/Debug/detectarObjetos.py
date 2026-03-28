@@ -1,71 +1,80 @@
-import cv2 as cv
-import torch
-import socket
+"""
+detectarObjetos.py
+------------------
+Detección de objetos con YOLOv8 (ultralytics).
+Envía el nombre del objeto detectado mediante MQTT.
+El vídeo se recibe desde el servidor WebRTC convertido a MJPEG.
+"""
+
+import cv2
 import time
 import sys
+import paho.mqtt.client as mqtt
 
-# --- CONFIGURACIÓN TCP ---
-HOST = "127.0.0.1"
-PORT = 5007
-time.sleep(2)  # Espera para dar tiempo al servidor C#
+# ---------------------------- MQTT ----------------------------
+MQTT_BROKER = "127.0.0.1"
+MQTT_PORT = 1883
+MQTT_TOPIC = "objetos"
 
+mqtt_client = mqtt.Client()
+mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
+print("[OK] Conectado al broker MQTT (objetos)")
+
+sys.stdout.reconfigure(encoding='utf-8')
+
+# ---------------------------- MODELO YOLOv8 ----------------------------
 try:
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((HOST, PORT))
-    print(f"✅ Conectado al servidor C# en {HOST}:{PORT}", flush=True)
+    from ultralytics import YOLO
+    model = YOLO("yolov8n.pt")  # modelo ligero
+    print("[OK] Modelo YOLOv8 cargado correctamente.")
 except Exception as e:
-    print(f"❌ Error al conectar con el servidor C#: {e}", flush=True)
+    print(f"[ERROR] No se pudo cargar el modelo YOLO: {e}")
     sys.exit(1)
 
-# --- MODELO YOLOv5 ---
-print("🧠 Cargando modelo YOLOv5s...", flush=True)
-model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-
-BANANA_CLASS_ID = 46
-CARROT_CLASS_ID = 51
-DONUT_CLASS_ID = 54
-FORK_CLASS_ID = 42
-CLOCK_CLASS_ID = 74
-PIZZA_CLASS_ID = 53
-
-cap = cv.VideoCapture(0)
+# ---------------------------- INICIAR STREAM MJPEG ----------------------------
+cap = cv2.VideoCapture("http://localhost:8080/stream.mjpg")
 if not cap.isOpened():
-    print("❌ No se pudo abrir la cámara.", flush=True)
-    client.close()
+    print("[ERROR] No se puede abrir el stream de vídeo.")
     sys.exit(1)
-else:
-    print("✅ Cámara abierta correctamente.", flush=True)
 
-while cap.isOpened():
+print("[OK] Stream de vídeo iniciado correctamente.")
+
+# ---------------------------- CONTROL DE ENVÍO ----------------------------
+ultimo_objeto = None
+ultimo_tiempo = 0
+DELAY = 1.0  # segundos entre envíos repetidos
+
+# ---------------------------- BUCLE PRINCIPAL ----------------------------
+while True:
     ret, frame = cap.read()
     if not ret:
-        print("⚠️ No se pudo leer frame.", flush=True)
-        break
+        print("[WARN] No se pudo leer frame, reintentando...")
+        time.sleep(0.1)
+        continue
 
-    img_rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-    results = model(img_rgb)
-    detected = None
+    results = model(frame, verbose=False)
 
-    for *box, conf, cls in results.xyxy[0]:
-        obj = int(cls.item())
-        if obj == BANANA_CLASS_ID: detected = "BANANA"
-        elif obj == CLOCK_CLASS_ID: detected = "RELOJ"
-        elif obj == DONUT_CLASS_ID: detected = "DONUT"
-        elif obj == CARROT_CLASS_ID: detected = "ZANAHORIA"
-        elif obj == PIZZA_CLASS_ID: detected = "PIZZA"
-        elif obj == FORK_CLASS_ID: detected = "TENEDOR"
+    if len(results) > 0:
+        for box in results[0].boxes:
+            clase = int(box.cls[0])
+            nombre = results[0].names.get(clase, "desconocido")
+            conf = float(box.conf[0])
 
-        if detected:
-            msg = detected + "\n"
-            client.sendall(msg.encode("utf-8"))
-            print(f"📤 Enviado: {detected}", flush=True)
-            break
+            if conf > 0.6:
+                ahora = time.time()
+                if nombre != ultimo_objeto or (ahora - ultimo_tiempo) > DELAY:
+                    mqtt_client.publish(MQTT_TOPIC, nombre)
+                    print(f"[OBJETO] Publicado por MQTT: {nombre}")
+                    ultimo_objeto = nombre
+                    ultimo_tiempo = ahora
+                break
 
-    cv.imshow("Detector de objetos", frame)
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    # Debug opcional
+    cv2.imshow("Objetos (debug local)", frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
-client.close()
-cv.destroyAllWindows()
-print("✅ Script finalizado correctamente.", flush=True)
+mqtt_client.disconnect()
+cv2.destroyAllWindows()
+print("[INFO] Script de objetos finalizado correctamente.")
