@@ -2,17 +2,31 @@
 
 
 
--------Versión 1.1----------
+\-------Versión 2.0----------
 
 
 
-Clon del repo TFG-Reconocimiento\_de\_gestos
+MQTT funcionando
+
+Reconocimiento de objetos OK -- YOLO
+
+Reconocimiento de gestos KO -- YOLO 
 
 
 
 
 
--------Versión 1.2----------
+\-------Versión 1.3----------
+
+
+
+Funcionamiento OK de reconocimiento de objetos
+
+
+
+
+
+\-------Versión 1.2----------
 
 
 
@@ -22,11 +36,15 @@ Botón reconocimiento de objetos KO
 
 
 
-
-
--------Versión 1.3----------
+\-------Versión 1.1----------
 
 
 
-Funcionamiento OK de reconocimiento de objetos 
+Clon del repo TFG-Reconocimiento\_de\_gestos
+
+
+
+
+
+
 
