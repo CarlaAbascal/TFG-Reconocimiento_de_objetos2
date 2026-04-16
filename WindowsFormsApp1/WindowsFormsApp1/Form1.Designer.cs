@@ -33,12 +33,11 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.pictureBoxPC = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelEstado = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.btnGestos = new System.Windows.Forms.Button();
             this.btnObjetos = new System.Windows.Forms.Button();
             this.btnDetener = new System.Windows.Forms.Button();
+            this.btnCopiarLog = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPC)).BeginInit();
             this.SuspendLayout();
             // 
@@ -54,7 +53,7 @@
             this.altLbl.Text = "0";
             this.altLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // button1 (Conectar)
+            // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.button1.Location = new System.Drawing.Point(22, 38);
@@ -65,7 +64,7 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // button2 (Despegar)
+            // button2
             // 
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.button2.Location = new System.Drawing.Point(22, 94);
@@ -76,7 +75,7 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3 (Aterrizar)
+            // button3
             // 
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.button3.Location = new System.Drawing.Point(22, 150);
@@ -96,27 +95,7 @@
             this.pictureBoxPC.TabIndex = 5;
             this.pictureBoxPC.TabStop = false;
             // 
-            // label1 (Video PC)
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(442, 113);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 20);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "Video PC";
-            // 
-            // labelEstado
-            // 
-            this.labelEstado.AutoSize = true;
-            this.labelEstado.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.labelEstado.ForeColor = System.Drawing.Color.Black;
-            this.labelEstado.Location = new System.Drawing.Point(801, 48);
-            this.labelEstado.Name = "labelEstado";
-            this.labelEstado.Size = new System.Drawing.Size(271, 32);
-            this.labelEstado.TabIndex = 10;
-            this.labelEstado.Text = "Esperando gesto...";
-            // 
-            // listBox1 (Logs)
+            // listBox1
             // 
             this.listBox1.Font = new System.Drawing.Font("Consolas", 10F);
             this.listBox1.FormattingEnabled = true;
@@ -124,7 +103,7 @@
             this.listBox1.ItemHeight = 23;
             this.listBox1.Location = new System.Drawing.Point(807, 94);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(685, 303);
+            this.listBox1.Size = new System.Drawing.Size(685, 671);
             this.listBox1.TabIndex = 11;
             // 
             // btnGestos
@@ -160,27 +139,35 @@
             this.btnDetener.UseVisualStyleBackColor = true;
             this.btnDetener.Click += new System.EventHandler(this.btnDetener_Click);
             // 
+            // btnCopiarLog
+            // 
+            this.btnCopiarLog.Location = new System.Drawing.Point(1372, 58);
+            this.btnCopiarLog.Name = "btnCopiarLog";
+            this.btnCopiarLog.Size = new System.Drawing.Size(120, 30);
+            this.btnCopiarLog.TabIndex = 0;
+            this.btnCopiarLog.Text = "Copiar log";
+            this.btnCopiarLog.UseVisualStyleBackColor = true;
+            this.btnCopiarLog.Click += new System.EventHandler(this.btnCopiarLog_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1542, 552);
+            this.ClientSize = new System.Drawing.Size(1662, 1057);
+            this.Controls.Add(this.btnCopiarLog);
             this.Controls.Add(this.btnDetener);
             this.Controls.Add(this.btnObjetos);
             this.Controls.Add(this.btnGestos);
             this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBoxPC);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.altLbl);
-            this.Controls.Add(this.labelEstado);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPC)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -191,11 +178,11 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.PictureBox pictureBoxPC;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label labelEstado;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button btnGestos;
         private System.Windows.Forms.Button btnObjetos;
         private System.Windows.Forms.Button btnDetener;
+        private System.Windows.Forms.Button btnCopiarLog;
+
     }
 }

@@ -48,33 +48,33 @@ DELAY = 1.0  # segundos entre envíos repetidos
 while True:
     ret, frame = cap.read()
     if not ret:
-        print("[WARN] No se pudo leer frame, reintentando...")
         time.sleep(0.1)
         continue
 
     results = model(frame, verbose=False)
 
-    if len(results) > 0:
-        for box in results[0].boxes:
-            clase = int(box.cls[0])
-            nombre = results[0].names.get(clase, "desconocido")
-            conf = float(box.conf[0])
+    if len(results) == 0:
+        continue
 
-            if conf > 0.6:
-                ahora = time.time()
-                if nombre != ultimo_objeto or (ahora - ultimo_tiempo) > DELAY:
-                    mqtt_client.publish(MQTT_TOPIC, nombre)
-                    print(f"[OBJETO] Publicado por MQTT: {nombre}")
-                    ultimo_objeto = nombre
-                    ultimo_tiempo = ahora
-                break
+    r = results[0]
 
-    # Debug opcional
-    cv2.imshow("Objetos (debug local)", frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    if r.boxes is None or len(r.boxes) == 0:
+        continue
+
+    for box in r.boxes:
+        clase = int(box.cls[0])
+        nombre = r.names.get(clase, "desconocido")
+        conf = float(box.conf[0])
+
+        if conf > 0.6:
+            ahora = time.time()
+            if nombre != ultimo_objeto or (ahora - ultimo_tiempo) > DELAY:
+                mqtt_client.publish(MQTT_TOPIC, nombre)
+                print(f"[OBJETO] Publicado por MQTT: {nombre}")
+                ultimo_objeto = nombre
+                ultimo_tiempo = ahora
+            break  # solo enviamos un objeto por frame
 
 cap.release()
 mqtt_client.disconnect()
-cv2.destroyAllWindows()
 print("[INFO] Script de objetos finalizado correctamente.")

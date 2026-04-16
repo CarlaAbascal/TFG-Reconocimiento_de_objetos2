@@ -29,7 +29,7 @@ namespace WindowsFormsApp1
         // >>> WEBRTC: viewer dentro del formulario
         private WebView2 webViewRTC;
 
-        // >>> WEBRTC: procesos python (server + publisher)
+        // >>> WEBRTC: procesos python (de momento no se usan, pero los dejamos)
         private Process webrtcServerProcess;
         private Process webrtcPublisherProcess;
 
@@ -41,11 +41,16 @@ namespace WindowsFormsApp1
         private bool modoGestosActivo = false;
         private bool modoObjetosActivo = false;
 
-        Process procesoGestos;
-        Process procesoObjetos;
+        // Procesos de scripts
+        private Process procesoGestos;
+        private Process procesoObjetos;
 
-        // Ruta del Python del entorno virtual mp_env
-        string rutaPython = @"C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\mp_env\Scripts\python.exe";
+        // Ruta del Python de los entornos virtuales
+        string rutaPythonGestos = @"C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\gestos_env310\Scripts\python.exe";
+        string rutaPythonObjetos = @"C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\mp_env\Scripts\python.exe";
+
+        // Ruta Scripts detección
+        string rutaScripts = @"C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug";
 
         public Form1()
         {
@@ -63,18 +68,25 @@ namespace WindowsFormsApp1
             this.Controls.Add(webViewRTC);
             webViewRTC.BringToFront();
 
-            this.Load += async (_, __) =>
+            // >>> Único handler de Load
+            this.Load += Form1_Load;
+        }
+
+        private async void Form1_Load(object sender, EventArgs e)
+        {
+            // >>> INICIAR MQTT
+            IniciarMQTT();
+
+            // >>> INICIAR WEBRTC
+            try
             {
-                try
-                {
-                    await webViewRTC.EnsureCoreWebView2Async();
-                    webViewRTC.Source = new Uri("http://localhost:8080/");
-                }
-                catch (Exception ex)
-                {
-                    listBox1.Items.Add($"⚠️ Error inicializando WebView2: {ex.Message}");
-                }
-            };
+                await webViewRTC.EnsureCoreWebView2Async();
+                webViewRTC.Source = new Uri("http://localhost:8080/");
+            }
+            catch (Exception ex)
+            {
+                listBox1.Items.Add($"⚠️ Error inicializando WebView2: {ex.Message}");
+            }
         }
 
         // ==========================
@@ -97,8 +109,19 @@ namespace WindowsFormsApp1
         // ==========================
         private void button1_Click_1(object sender, EventArgs e)
         {
-            miDron.Conectar("simulacion");
-            miDron.EnviarDatosTelemetria(ProcesarTelemetria);
+            try
+            {
+                listBox1.Items.Add("[INFO] Intentando conectar al dron en modo simulacion...");
+                miDron.Conectar("simulacion");
+                listBox1.Items.Add("[OK] Conexión solicitada al dron.");
+
+                miDron.EnviarDatosTelemetria(ProcesarTelemetria);
+                listBox1.Items.Add("[OK] Telemetría solicitada.");
+            }
+            catch (Exception ex)
+            {
+                listBox1.Items.Add($"[ERROR] Conectar: {ex.Message}");
+            }
         }
 
         private void EnAire(byte id, object param)
@@ -110,13 +133,27 @@ namespace WindowsFormsApp1
 
         private void button2_Click(object sender, EventArgs e)
         {
-            miDron.Despegar(20, bloquear: false, f: EnAire, param: "Volando");
-            button2.BackColor = Color.Yellow;
+            try
+            {
+                miDron.Despegar(20, bloquear: false, f: EnAire, param: "Volando");
+                button2.BackColor = Color.Yellow;
+            }
+            catch (Exception ex)
+            {
+                listBox1.Items.Add($"[ERROR] Despegar: {ex.Message}");
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            miDron.Aterrizar(bloquear: false);
+            try
+            {
+                miDron.Aterrizar(bloquear: false);
+            }
+            catch (Exception ex)
+            {
+                listBox1.Items.Add($"[ERROR] Aterrizar: {ex.Message}");
+            }
         }
 
         // ==========================
@@ -158,7 +195,6 @@ namespace WindowsFormsApp1
                     else if (topic == "objetos")
                     {
                         listBox1.Items.Add($"Objeto detectado por MQTT: {mensaje}");
-                        // No hay acción asociada (solo mostrar)
                     }
                 });
 
@@ -171,111 +207,196 @@ namespace WindowsFormsApp1
         }
 
         // ==========================
-        //     BOTÓN GESTOS (MQTT)
+        //     BOTÓN GESTOS
         // ==========================
-        private void btnGestos_Click(object sender, EventArgs e)
+        private async void btnGestos_Click(object sender, EventArgs e)
         {
-            // Detener objetos si están activos
-            if (procesoObjetos != null && !procesoObjetos.HasExited)
+            try
             {
-                procesoObjetos.Kill();
-                procesoObjetos.Dispose();
-                procesoObjetos = null;
-                listBox1.Items.Add("[INFO] Script de objetos detenido.");
+                // Parar objetos si están en marcha
+                if (procesoObjetos != null && !procesoObjetos.HasExited)
+                {
+                    procesoObjetos.Kill();
+                    procesoObjetos.Dispose();
+                    procesoObjetos = null;
+                    listBox1.Items.Add("[INFO] Script de objetos detenido.");
+                }
+
+                // Parar gestos si ya estaban en marcha
+                if (procesoGestos != null && !procesoGestos.HasExited)
+                {
+                    procesoGestos.Kill();
+                    procesoGestos.Dispose();
+                    procesoGestos = null;
+                    listBox1.Items.Add("[INFO] Script de gestos reiniciado.");
+                }
+
+                modoGestosActivo = true;
+                modoObjetosActivo = false;
+
+                listBox1.Items.Add("[INFO] Cargando reconocimiento de gestos...");
+                listBox1.Items.Add("[INFO] Script de gestos iniciado.");
+
+                procesoGestos = StartProcess(
+                    rutaPythonGestos,
+                    Path.Combine(rutaScripts, "detectar_mano_mp.py"),
+                    "GESTOS",
+                    rutaScripts
+                );
+
+                // Esperar un poco a que el servidor local 8090 arranque
+                await Task.Delay(2000);
+
+                webViewRTC.Source = new Uri("http://127.0.0.1:8090/");
+                listBox1.Items.Add("[INFO] Mostrando vídeo de gestos en el formulario.");
             }
-
-            // Iniciar gestos
-            procesoGestos = new Process();
-            procesoGestos.StartInfo.FileName = rutaPython;
-            procesoGestos.StartInfo.Arguments = "detectar_mano.py";
-            procesoGestos.StartInfo.WorkingDirectory = Application.StartupPath;
-            procesoGestos.StartInfo.UseShellExecute = false;
-            procesoGestos.StartInfo.CreateNoWindow = true;
-            procesoGestos.Start();
-            listBox1.Items.Add("[INFO] Script de gestos iniciado.");
+            catch (Exception ex)
+            {
+                listBox1.Items.Add($"[ERROR] btnGestos_Click: {ex.Message}");
+            }
         }
-
 
         // ==========================
         //     ACCIONES POR GESTO
         // ==========================
         private void EjecutarAccionPorGesto(string gesto)
         {
-            switch (gesto.ToLower())
+            try
             {
-                case "palm":
-                    miDron.Despegar(20, bloquear: false, f: EnAire, param: "Volando");
-                    break;
+                switch (gesto.ToLower())
+                {
+                    case "palm":
+                        miDron.Despegar(20, bloquear: false, f: EnAire, param: "Volando");
+                        break;
 
-                case "puño":
-                    miDron.Aterrizar(bloquear: false);
-                    break;
+                    case "puño":
+                        miDron.Aterrizar(bloquear: false);
+                        break;
 
-                case "uno":
-                    miDron.Mover("Forward", 10, bloquear: false);
-                    break;
+                    case "uno":
+                        miDron.Mover("Forward", 10, bloquear: false);
+                        break;
 
-                case "dos":
-                    miDron.CambiarHeading(90, bloquear: false);
-                    break;
+                    case "dos":
+                        miDron.CambiarHeading(90, bloquear: false);
+                        break;
 
-                case "tres":
-                    miDron.CambiarHeading(270, bloquear: false);
-                    break;
+                    case "tres":
+                        miDron.CambiarHeading(270, bloquear: false);
+                        break;
 
-                default:
-                    listBox1.Items.Add($"Gesto no reconocido: {gesto}");
-                    break;
+                    default:
+                        listBox1.Items.Add($"Gesto no reconocido: {gesto}");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                listBox1.Items.Add($"[ERROR] Acción por gesto '{gesto}': {ex.Message}");
             }
         }
 
         // ==========================
-        //     BOTÓN OBJETOS (WebRTC + MQTT)
+        //     BOTÓN OBJETOS
         // ==========================
         private void btnObjetos_Click(object sender, EventArgs e)
         {
-            // Detener gestos si están activos
-            if (procesoGestos != null && !procesoGestos.HasExited)
+            try
             {
-                procesoGestos.Kill();
-                procesoGestos.Dispose();
-                procesoGestos = null;
-                listBox1.Items.Add("[INFO] Script de gestos detenido.");
-            }
+                // Parar gestos si están en marcha
+                if (procesoGestos != null && !procesoGestos.HasExited)
+                {
+                    procesoGestos.Kill();
+                    procesoGestos.Dispose();
+                    procesoGestos = null;
+                    listBox1.Items.Add("[INFO] Script de gestos detenido.");
+                }
 
-            // Iniciar objetos
-            procesoObjetos = new Process();
-            procesoObjetos.StartInfo.FileName = rutaPython;
-            procesoObjetos.StartInfo.Arguments = "detectarObjetos.py";
-            procesoObjetos.StartInfo.WorkingDirectory = Application.StartupPath;
-            procesoObjetos.StartInfo.UseShellExecute = false;
-            procesoObjetos.StartInfo.CreateNoWindow = true;
-            procesoObjetos.Start();
-            listBox1.Items.Add("[INFO] Script de objetos iniciado.");
+                // Parar objetos si ya estaban en marcha
+                if (procesoObjetos != null && !procesoObjetos.HasExited)
+                {
+                    procesoObjetos.Kill();
+                    procesoObjetos.Dispose();
+                    procesoObjetos = null;
+                    listBox1.Items.Add("[INFO] Script de objetos reiniciado.");
+                }
+
+                modoGestosActivo = false;
+                modoObjetosActivo = true;
+
+                procesoObjetos = StartProcess(
+                    rutaPythonObjetos,
+                    Path.Combine(rutaScripts, "detectarObjetos.py"),
+                    "OBJETOS",
+                    rutaScripts
+                );
+
+                listBox1.Items.Add("[INFO] Script de objetos iniciado.");
+                webViewRTC.Source = new Uri("http://localhost:8080/");
+            }
+            catch (Exception ex)
+            {
+                listBox1.Items.Add($"[ERROR] btnObjetos_Click: {ex.Message}");
+            }
         }
 
         // ==========================
-        //     BOTÓN DETENER TODOS 
+        //     BOTÓN DETENER TODOS
         // ==========================
         private void btnDetener_Click(object sender, EventArgs e)
         {
-            if (procesoGestos != null && !procesoGestos.HasExited)
+            try
             {
-                procesoGestos.Kill();
-                procesoGestos.Dispose();
-                procesoGestos = null;
-                listBox1.Items.Add("[INFO] Script de gestos detenido.");
-            }
+                // Detener script de gestos
+                if (procesoGestos != null && !procesoGestos.HasExited)
+                {
+                    procesoGestos.Kill();
+                    procesoGestos.Dispose();
+                    procesoGestos = null;
+                    listBox1.Items.Add("[INFO] Script de gestos detenido.");
+                }
 
-            if (procesoObjetos != null && !procesoObjetos.HasExited)
+                // Detener script de objetos
+                if (procesoObjetos != null && !procesoObjetos.HasExited)
+                {
+                    procesoObjetos.Kill();
+                    procesoObjetos.Dispose();
+                    procesoObjetos = null;
+                    listBox1.Items.Add("[INFO] Script de objetos detenido.");
+                }
+
+                modoGestosActivo = false;
+                modoObjetosActivo = false;
+
+                // Volver al viewer base
+                webViewRTC.Source = new Uri("http://localhost:8080/");
+            }
+            catch (Exception ex)
             {
-                procesoObjetos.Kill();
-                procesoObjetos.Dispose();
-                procesoObjetos = null;
-                listBox1.Items.Add("[INFO] Script de objetos detenido.");
+                listBox1.Items.Add($"[ERROR] btnDetener_Click: {ex.Message}");
             }
         }
 
+        // ==========================
+        //     BOTÓN COPIAR LISTBOX
+        // ==========================
+        private void btnCopiarLog_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+
+                foreach (var item in listBox1.Items)
+                    sb.AppendLine(item.ToString());
+
+                Clipboard.SetText(sb.ToString());
+                MessageBox.Show("Log copiat al porta-retalls.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error copiando log: {ex.Message}");
+            }
+        }
 
         // ==========================
         //     START PROCESS
@@ -285,7 +406,7 @@ namespace WindowsFormsApp1
             var psi = new ProcessStartInfo
             {
                 FileName = exe,
-                Arguments = args,
+                Arguments = $"\"{args}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -294,11 +415,13 @@ namespace WindowsFormsApp1
             };
 
             var p = new Process { StartInfo = psi };
+
             p.OutputDataReceived += (s, e) =>
             {
                 if (!string.IsNullOrEmpty(e.Data))
                     listBox1.Items.Add($"[{tag}] {e.Data}");
             };
+
             p.ErrorDataReceived += (s, e) =>
             {
                 if (!string.IsNullOrEmpty(e.Data))
@@ -320,6 +443,16 @@ namespace WindowsFormsApp1
             {
                 if (mqttClient != null && mqttConnected)
                     mqttClient.DisconnectAsync().Wait();
+            }
+            catch { }
+
+            try
+            {
+                if (procesoGestos != null && !procesoGestos.HasExited)
+                    procesoGestos.Kill();
+
+                if (procesoObjetos != null && !procesoObjetos.HasExited)
+                    procesoObjetos.Kill();
             }
             catch { }
 

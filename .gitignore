@@ -1,1 +1,7 @@
 .vs/
+gestos_env310/
+mp_env/
+__pycache__/
+*.pyc
+venv/
+.env/

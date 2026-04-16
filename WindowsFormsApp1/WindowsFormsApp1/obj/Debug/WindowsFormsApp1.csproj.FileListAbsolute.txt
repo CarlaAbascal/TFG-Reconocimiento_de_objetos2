@@ -224,7 +224,6 @@ C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimient
 C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
 C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
 C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
-C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\detectar_mano.py
 C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe.config
 C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe
 C:\Users\CARLA\Desktop\UNIVERSITAT\TFG\AA-WebRTC_objeto_gestos\TFG-Reconocimiento_de_objetos2\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.pdb
