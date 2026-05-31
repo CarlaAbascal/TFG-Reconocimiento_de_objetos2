@@ -7,7 +7,11 @@ import cv2
 from aiortc import RTCPeerConnection, RTCSessionDescription, RTCConfiguration, RTCIceServer
 from aiortc.contrib.media import MediaRelay
 
-logging.basicConfig(level=logging.INFO)
+# Logs més nets
+logging.basicConfig(level=logging.WARNING)
+logging.getLogger("aiohttp.access").setLevel(logging.WARNING)
+logging.getLogger("aioice").setLevel(logging.WARNING)
+logging.getLogger("aiortc").setLevel(logging.WARNING)
 
 pcs_publishers = set()
 pcs_viewers = set()
@@ -35,15 +39,14 @@ async def publish_offer(request):
 
     pc = RTCPeerConnection(rtc_config)
     pcs_publishers.add(pc)
-    logging.info("Publisher conectado: pc=%s", id(pc))
 
     @pc.on("track")
     def on_track(track):
         global source_video_track
-        logging.info("Track recibido del publisher: %s", track.kind)
+
         if track.kind == "video":
             source_video_track = track
-            logging.info("Track de vídeo original guardado")
+            print("[SERVER] Track de vídeo recibido del publisher")
 
     await pc.setRemoteDescription(offer)
     answer = await pc.createAnswer()
@@ -51,7 +54,10 @@ async def publish_offer(request):
 
     return web.Response(
         content_type="application/json",
-        text=json.dumps({"sdp": pc.localDescription.sdp, "type": pc.localDescription.type}),
+        text=json.dumps({
+            "sdp": pc.localDescription.sdp,
+            "type": pc.localDescription.type
+        }),
     )
 
 
@@ -62,7 +68,9 @@ async def viewer_offer(request):
         return web.Response(
             status=503,
             content_type="application/json",
-            text=json.dumps({"error": "No hay vídeo disponible todavía. Arranca el publisher primero."}),
+            text=json.dumps({
+                "error": "No hay vídeo disponible todavía. Arranca el publisher primero."
+            }),
         )
 
     params = await request.json()
@@ -70,9 +78,7 @@ async def viewer_offer(request):
 
     pc = RTCPeerConnection(rtc_config)
     pcs_viewers.add(pc)
-    logging.info("Viewer conectado: pc=%s", id(pc))
 
-    # IMPORTANT: cada viewer recibe su propia suscripción
     viewer_track = relay.subscribe(source_video_track)
     pc.addTrack(viewer_track)
 
@@ -82,7 +88,10 @@ async def viewer_offer(request):
 
     return web.Response(
         content_type="application/json",
-        text=json.dumps({"sdp": pc.localDescription.sdp, "type": pc.localDescription.type}),
+        text=json.dumps({
+            "sdp": pc.localDescription.sdp,
+            "type": pc.localDescription.type
+        }),
     )
 
 
@@ -96,7 +105,6 @@ async def stream_mjpeg(request):
             text="No hi ha vídeo disponible encara. Arrenca el publisher."
         )
 
-    # IMPORTANT: cada petición HTTP recibe su propia suscripción
     mjpeg_track = relay.subscribe(source_video_track)
 
     resp = web.StreamResponse(
@@ -105,6 +113,7 @@ async def stream_mjpeg(request):
             "Content-Type": "multipart/x-mixed-replace; boundary=frame"
         },
     )
+
     await resp.prepare(request)
 
     try:
@@ -113,6 +122,7 @@ async def stream_mjpeg(request):
             img = frame.to_ndarray(format="bgr24")
 
             ok, jpg = cv2.imencode(".jpg", img)
+
             if not ok:
                 continue
 
@@ -122,21 +132,39 @@ async def stream_mjpeg(request):
                 jpg.tobytes() +
                 b"\r\n"
             )
+
             await resp.write(chunk)
 
     except asyncio.CancelledError:
         pass
-    except Exception as e:
-        logging.error("Error en stream_mjpeg: %s", e)
+    except Exception:
+        # Evitem omplir el log amb "Cannot write to closing transport"
+        pass
 
     return resp
 
 
+# Endpoint lleuger per saber si el publisher ja ha enviat vídeo
+async def status(request):
+    global source_video_track
+
+    return web.Response(
+        content_type="application/json",
+        text=json.dumps({
+            "server": True,
+            "video": source_video_track is not None
+        })
+    )
+
+
 async def on_shutdown(app):
     coros = []
+
     for pc in list(pcs_publishers) + list(pcs_viewers):
         coros.append(pc.close())
+
     await asyncio.gather(*coros)
+
     pcs_publishers.clear()
     pcs_viewers.clear()
 
@@ -148,9 +176,9 @@ app.router.add_get("/", index)
 app.router.add_post("/publish_offer", publish_offer)
 app.router.add_post("/viewer_offer", viewer_offer)
 app.router.add_get("/stream.mjpg", stream_mjpeg)
+app.router.add_get("/status", status)
 
-for r in app.router.routes():
-    print("ROUTE:", r.method, r.resource)
 
 if __name__ == "__main__":
-    web.run_app(app, port=8080)
+    print("[SERVER] Iniciando servidor en http://127.0.0.1:8080")
+    web.run_app(app, host="127.0.0.1", port=8080, access_log=None)
