@@ -1,7 +1,17 @@
 # TFG-Reconocimiento de objetos
 
-\-------Versión 2.1----------
+\-------Versión 2.2----------
 
+
+Boton conectar --> server.py, script_publisher.py, simulador dron y deja el video preparado
+
+Boton gestos --> detectar_mano_mp.py, http://127.0.0.1:8090/
+
+Boton Objetos --> detectarObjetos.py, http://localhost:8080/
+
+
+
+\-------Versión 2.1----------
 
 
 MQTT funcionando
